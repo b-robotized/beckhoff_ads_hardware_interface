@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="beckhoff_bot">
+
+  <!-- Use this if parameters are set from the launch file, otherwise delete -->
+  <xacro:arg name="prefix" default=""/>
+
+  <xacro:arg name="use_mock_hardware" default="false"/>
+  <xacro:arg name="mock_sensor_commands" default="false"/>
+
+  <xacro:include filename="$(find beckhoff_description)/urdf/beckhoff_bot/beckhoff_bot_macro.xacro"/>
+  <xacro:include filename="$(find beckhoff_description)/urdf/beckhoff_bot/beckhoff_bot_macro.ros2_control.xacro"/>
+
+  <!-- create link fixed to the "world" -->
+  <link name="world"/>
+
+  <!-- Load robot's macro with parameters -->
+  <!-- set prefix if multiple robots are used -->
+  <xacro:beckhoff_bot prefix="$(arg prefix)" parent="world">
+    <origin xyz="0 0 0" rpy="0 0 0"/>          <!-- position robot in the world -->
+  </xacro:beckhoff_bot>
+
+  <xacro:beckhoff_bot_ros2_control
+    name="beckhoff_bot"
+    prefix="$(arg prefix)"
+    use_mock_hardware="$(arg use_mock_hardware)"
+    mock_sensor_commands="$(arg mock_sensor_commands)"/>
+
+</robot>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+
+    <xacro:macro name="command_interface_PLC" params="name initial_value:='' PLC_symbol PLC_type n_elements:=1 index:=''">
+        <command_interface name="${name}">
+            <xacro:if value="${initial_value != ''}">
+                <param name="initial_value">${initial_value}</param>
+            </xacro:if>
+            <param name="PLC_symbol">${PLC_symbol}</param>
+            <param name="PLC_type">${PLC_type}</param>
+            <param name="n_elements">${n_elements}</param>
+            <xacro:if value="${index != ''}">
+                <param name="index">${index}</param>
+            </xacro:if>
+        </command_interface>
+    </xacro:macro>
+
+    <xacro:macro name="state_interface_PLC" params="name PLC_symbol PLC_type n_elements:=1 index:=''">
+        <state_interface name="${name}">
+            <param name="PLC_symbol">${PLC_symbol}</param>
+            <param name="PLC_type">${PLC_type}</param>
+            <param name="n_elements">${n_elements}</param>
+            <xacro:if value="${index != ''}">
+                <param name="index">${index}</param>
+            </xacro:if>
+        </state_interface>
+    </xacro:macro>
+
+    <xacro:macro name="beckhoff_bot_ros2_control" params="
+                name
+                prefix
+                use_mock_hardware:=false
+                mock_sensor_commands:=false"
+                >
+
+        <ros2_control name="${name}" type="system">
+        <hardware>
+            <xacro:if value="${use_mock_hardware}">
+                <plugin>mock_components/GenericSystem</plugin>
+                <param name="mock_sensor_commands">${mock_sensor_commands}</param>
+            </xacro:if>
+            <xacro:unless value="${use_mock_hardware}">
+                <plugin>beckhoff_hardware_interface/BeckhoffSystem</plugin>
+                <param name="plc_ip_address">192.168.122.218</param>
+                <param name="plc_ams_net_id">192.168.122.218.1.1</param>
+                <param name="plc_ams_port">851</param>
+                <param name="local_ams_net_id">192.168.122.1.1.1</param>
+            </xacro:unless>
+        </hardware>
+
+        <!-- IMPORTANT!
+        As it is currently implemented, multiple interfaces targeting different indices of a PLC variable of type ARRAY[x] 
+        MUST be defined in ascending order starting at 0! (0, 1, 2...). 
+        Declaring indices descending or out-of-order (2, 1, 0) causes mismatch between hw_states/command buffers and byte buffers received from PLC
+        -->
+
+        <gpio name="robot_io">
+            <xacro:command_interface_PLC name="ManualJogging" PLC_symbol="MAIN.bManualJogging" PLC_type="BOOL" initial_value="1"/>
+            <xacro:command_interface_PLC name="GoToID" PLC_symbol="MAIN.goToID" PLC_type="UDINT" initial_value="5"/>
+            <xacro:command_interface_PLC name="ACSJogPos_0" PLC_symbol="MAIN.bACSJogPos" PLC_type="BOOL" n_elements="2" index="0" initial_value="1"/>
+            <xacro:command_interface_PLC name="ACSJogPos_1" PLC_symbol="MAIN.bACSJogPos" PLC_type="BOOL" n_elements="2" index="1" initial_value="1"/>            
+        </gpio>
+        <sensor name="robot_sensor">
+            <xacro:state_interface_PLC name="StatusError" PLC_symbol="MAIN.bStatusError" PLC_type="BOOL"/>
+            <xacro:state_interface_PLC name="BatteryVoltage" PLC_symbol="MAIN.BatteryVoltage" PLC_type="REAL"/>
+            <xacro:state_interface_PLC name="CurrentPosition_0" PLC_symbol="MAIN.currentPos" PLC_type="LREAL" n_elements="2" index="0" />
+            <xacro:state_interface_PLC name="CurrentPosition_1" PLC_symbol="MAIN.currentPos" PLC_type="LREAL" n_elements="2" index="1" />
+        </sensor>
+
+        </ros2_control>
+    </xacro:macro>
+</robot>

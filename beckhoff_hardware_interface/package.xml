@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>beckhoff_hardware_interface</name>
+  <version>0.0.0</version>
+  <description>Ros2Control hardware interface for integrating with Beckhoff PLC</description>
+  <maintainer email="nikola.banovic@b-robotized.com">Nikola Banovic</maintainer>
+  <license>b-robotized</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>hardware_interface</depend>
+
+  <depend>pluginlib</depend>
+
+  <depend>rclcpp</depend>
+
+  <depend>rclcpp_lifecycle</depend>
+
+  <depend>yaml_cpp_vendor</depend>
+
+  <depend>ads_vendor</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
