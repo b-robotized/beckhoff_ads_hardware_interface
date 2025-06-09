@@ -28,18 +28,17 @@
 
     <xacro:macro name="beckhoff_bot_ros2_control" params="
                 name
-                prefix
-                use_mock_hardware:=false
+                mock_hardware:=false
                 mock_sensor_commands:=false"
                 >
 
         <ros2_control name="${name}" type="system">
         <hardware>
-            <xacro:if value="${use_mock_hardware}">
+            <xacro:if value="${mock_hardware}">
                 <plugin>mock_components/GenericSystem</plugin>
                 <param name="mock_sensor_commands">${mock_sensor_commands}</param>
             </xacro:if>
-            <xacro:unless value="${use_mock_hardware}">
+            <xacro:unless value="${mock_hardware}">
                 <plugin>beckhoff_hardware_interface/BeckhoffSystem</plugin>
                 <param name="plc_ip_address">192.168.122.218</param>
                 <param name="plc_ams_net_id">192.168.122.218.1.1</param>
@@ -53,6 +52,16 @@
         MUST be defined in ascending order starting at 0! (0, 1, 2...). 
         Declaring indices descending or out-of-order (2, 1, 0) causes mismatch between hw_states/command buffers and byte buffers received from PLC
         -->
+        
+        <!-- These interfaces can be under any component - joint, gpio or sensor -->
+        <!-- Format
+            interface name - arbitrary
+            PLC_symbol - exact symbol in your Beckhoff PLC application
+            n_elements - elements in the PLC variable - defaults to 1 
+            index - index of the element this interface is targeting in the PLC variable of type ARRAY[ ANY ]
+            PLC_type - type used to specify the byte size of the PLC variable
+            initial_value (command) - initial value written to the command
+            -->
 
         <gpio name="robot_io">
             <xacro:command_interface_PLC name="ManualJogging" PLC_symbol="MAIN.bManualJogging" PLC_type="BOOL" initial_value="1"/>

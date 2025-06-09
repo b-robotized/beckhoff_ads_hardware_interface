@@ -3,19 +3,15 @@
 <package format="3">
   <name>beckhoff_bringup</name>
   <version>0.0.0</version>
-  <description>Demo bringup package for beckhoff hardware interface</description>
+  <description>Demo bringup package for beckhoff_hardware_interface</description>
   <maintainer email="nikola.banovic@b-robotized.com">Nikola Banovic</maintainer>
   <license>b-robotized</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <exec_depend>beckhoff_description</exec_depend>
-
   <exec_depend>controller_manager</exec_depend>
 
   <exec_depend>robot_state_publisher</exec_depend>
-
-  <exec_depend>rviz2</exec_depend>
 
   <exec_depend>xacro</exec_depend>
 

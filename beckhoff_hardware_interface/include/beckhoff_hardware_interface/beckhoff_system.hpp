@@ -6,6 +6,8 @@
 // Unauthorized copying of this file, via any medium is strictly prohibited.
 // The file is considered confidential.
 
+// Author: Nikola Banovic
+
 #ifndef BECKHOFF_HARDWARE_INTERFACE__BECKHOFF_SYSTEM_HPP_
 #define BECKHOFF_HARDWARE_INTERFACE__BECKHOFF_SYSTEM_HPP_
 

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <robot xmlns:xacro="http://wiki.ros.org/xacro">
 
-  <xacro:include filename="$(find beckhoff_description)/urdf/common/inertials.xacro"/>
-  <xacro:include filename="$(find beckhoff_description)/urdf/common/materials.xacro"/>
+  <xacro:include filename="$(find beckhoff_bringup)/urdf/common/inertials.xacro"/>
+  <xacro:include filename="$(find beckhoff_bringup)/urdf/common/materials.xacro"/>
 
   <xacro:macro name="beckhoff_bot" params="prefix parent *origin">
     <!-- LINKS -->
@@ -15,7 +15,7 @@
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <cylinder length="0.3" radius="0.3"/>
-          <!--           <mesh filename="package://beckhoff_description/meshes/beckhoff_bot/visual/base_link.dae" /> -->
+          <!--           <mesh filename="package://beckhoff_bringup/meshes/beckhoff_bot/visual/base_link.dae" /> -->
         </geometry>
         <material name="black"/>
       </visual>
@@ -23,7 +23,7 @@
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <cylinder length="0.3" radius="0.3"/>
-          <!--           <mesh filename="package://beckhoff_description/meshes/beckhoff_bot/collision/base_link.stl" /> -->
+          <!--           <mesh filename="package://beckhoff_bringup/meshes/beckhoff_bot/collision/base_link.stl" /> -->
         </geometry>
       </collision>
     </link>
@@ -36,7 +36,7 @@
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <cylinder length="0.3" radius="0.15"/>
-          <!--           <mesh filename="package://beckhoff_description/meshes/beckhoff_bot/visual/link1.dae" /> -->
+          <!--           <mesh filename="package://beckhoff_bringup/meshes/beckhoff_bot/visual/link1.dae" /> -->
         </geometry>
         <material name="blue"/>
       </visual>
@@ -44,7 +44,7 @@
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <cylinder length="0.3" radius="0.15"/>
-          <!--           <mesh filename="package://beckhoff_description/meshes/beckhoff_bot/collision/link1.stl" /> -->
+          <!--           <mesh filename="package://beckhoff_bringup/meshes/beckhoff_bot/collision/link1.stl" /> -->
         </geometry>
         <material name="green"/>
       </collision>
@@ -58,7 +58,7 @@
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <cylinder length="0.3" radius="0.15"/>
-          <!--           <mesh filename="package://beckhoff_description/meshes/beckhoff_bot/visual/link2.dae" /> -->
+          <!--           <mesh filename="package://beckhoff_bringup/meshes/beckhoff_bot/visual/link2.dae" /> -->
         </geometry>
         <material name="grey"/>
       </visual>
@@ -66,7 +66,7 @@
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <cylinder length="0.3" radius="0.15"/>
-          <!--           <mesh filename="package://beckhoff_description/meshes/beckhoff_bot/collision/link2.stl"  /> -->
+          <!--           <mesh filename="package://beckhoff_bringup/meshes/beckhoff_bot/collision/link2.stl"  /> -->
         </geometry>
       </collision>
     </link>
@@ -79,7 +79,7 @@
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <cylinder length="0.2" radius="0.1"/>
-          <!--           <mesh filename="package://beckhoff_description/meshes/beckhoff_bot/visual/link3.dae" /> -->
+          <!--           <mesh filename="package://beckhoff_bringup/meshes/beckhoff_bot/visual/link3.dae" /> -->
         </geometry>
         <material name="orange"/>
       </visual>
@@ -87,7 +87,7 @@
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <cylinder length="0.2" radius="0.1"/>
-          <!--           <mesh filename="package://beckhoff_description/meshes/beckhoff_bot/collision/link3.stl"  /> -->
+          <!--           <mesh filename="package://beckhoff_bringup/meshes/beckhoff_bot/collision/link3.stl"  /> -->
         </geometry>
       </collision>
     </link>
@@ -100,7 +100,7 @@
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <cylinder length="0.1" radius="0.1"/>
-          <!--           <mesh filename="package://beckhoff_description/meshes/beckhoff_bot/visual/link4.dae" /> -->
+          <!--           <mesh filename="package://beckhoff_bringup/meshes/beckhoff_bot/visual/link4.dae" /> -->
         </geometry>
         <material name="brown"/>
       </visual>
@@ -108,7 +108,7 @@
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <cylinder length="0.1" radius="0.1"/>
-          <!--           <mesh filename="package://beckhoff_description/meshes/beckhoff_bot/collision/link4.stl"  /> -->
+          <!--           <mesh filename="package://beckhoff_bringup/meshes/beckhoff_bot/collision/link4.stl"  /> -->
         </geometry>
       </collision>
     </link>
@@ -121,7 +121,7 @@
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <cylinder length="0.15" radius="0.1"/>
-          <!--           <mesh filename="package://beckhoff_description/meshes/beckhoff_bot/visual/link5.dae" /> -->
+          <!--           <mesh filename="package://beckhoff_bringup/meshes/beckhoff_bot/visual/link5.dae" /> -->
         </geometry>
         <material name="red"/>
       </visual>
@@ -129,7 +129,7 @@
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <cylinder length="0.15" radius="0.1"/>
-          <!--           <mesh filename="package://beckhoff_description/meshes/beckhoff_bot/collision/link5.stl" /> -->
+          <!--           <mesh filename="package://beckhoff_bringup/meshes/beckhoff_bot/collision/link5.stl" /> -->
         </geometry>
       </collision>
     </link>
@@ -142,7 +142,7 @@
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <cylinder length="0.05" radius="0.075"/>
-          <!--           <mesh filename="package://beckhoff_description/meshes/beckhoff_bot/visual/link6.dae" /> -->
+          <!--           <mesh filename="package://beckhoff_bringup/meshes/beckhoff_bot/visual/link6.dae" /> -->
         </geometry>
         <material name="white"/>
       </visual>
@@ -150,7 +150,7 @@
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <cylinder length="0.05" radius="0.075"/>
-          <!--           <mesh filename="package://beckhoff_description/meshes/beckhoff_bot/collision/link6.stl" /> -->
+          <!--           <mesh filename="package://beckhoff_bringup/meshes/beckhoff_bot/collision/link6.stl" /> -->
         </geometry>
       </collision>
     </link>

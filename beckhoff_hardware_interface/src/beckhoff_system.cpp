@@ -5,6 +5,8 @@
 //
 // Unauthorized copying of this file, via any medium is strictly prohibited.
 // The file is considered confidential.
+//
+// Author: Nikola Banovic
 
 #include <limits>
 #include <vector>

@@ -12,11 +12,8 @@ find_package(ament_cmake REQUIRED)
 # find_package(<dependency> REQUIRED)
 
 install(
-  DIRECTORY config launch
+  DIRECTORY urdf launch config
   DESTINATION share/${PROJECT_NAME}
-)
-
-if(BUILD_TESTING)
-endif()
+)   
 
 ament_package()
