@@ -53,15 +53,7 @@
         Declaring indices descending or out-of-order (2, 1, 0) causes mismatch between hw_states/command buffers and byte buffers received from PLC
         -->
         
-        <!-- These interfaces can be under any component - joint, gpio or sensor -->
-        <!-- Format
-            interface name - arbitrary
-            PLC_symbol - exact symbol in your Beckhoff PLC application
-            n_elements - elements in the PLC variable - defaults to 1 
-            index - index of the element this interface is targeting in the PLC variable of type ARRAY[ ANY ]
-            PLC_type - type used to specify the byte size of the PLC variable
-            initial_value (command) - initial value written to the command
-            -->
+        <!-- These interfaces can be declared for any component - joint, gpio or sensor -->
 
         <gpio name="robot_io">
             <xacro:command_interface_PLC name="ManualJogging" PLC_symbol="MAIN.bManualJogging" PLC_type="BOOL" initial_value="1"/>

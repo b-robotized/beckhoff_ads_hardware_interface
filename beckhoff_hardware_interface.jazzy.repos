@@ -1,0 +1,5 @@
+repositories:
+  ads_vendor:
+    type: git
+    url: git@github.com:b-robotized/ads_vendor.git
+    version: main
