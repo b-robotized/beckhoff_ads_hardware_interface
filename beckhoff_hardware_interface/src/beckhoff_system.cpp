@@ -20,13 +20,8 @@
 namespace beckhoff_hardware_interface
 {
 hardware_interface::CallbackReturn BeckhoffSystem::on_init(
-  const hardware_interface::HardwareInfo & info)
+  const hardware_interface::HardwareComponentParams & /*params*/)
 {
-  if (hardware_interface::SystemInterface::on_init(info) != CallbackReturn::SUCCESS)
-  {
-    return CallbackReturn::ERROR;
-  }
-
   logging_throttle_clock_ = std::make_shared<rclcpp::Clock>(RCL_STEADY_TIME);
 
   return CallbackReturn::SUCCESS;
@@ -34,7 +29,7 @@ hardware_interface::CallbackReturn BeckhoffSystem::on_init(
 
 hardware_interface::CallbackReturn BeckhoffSystem::on_configure(
   const rclcpp_lifecycle::State & /*previous_state*/)
-{   
+{
     // Configure ADS Client Device
     if ( !configure_ads_device() ) {
         RCLCPP_FATAL(getLogger(), "Failed to configure ADS device from URDF parameters.");
@@ -88,14 +83,14 @@ bool BeckhoffSystem::build_sum_read_buffers() {
 
     ads_buffer_sum_read_response_.resize(total_error_block_size + total_data_block_size);
     ads_buffer_sum_read_request_.clear();
-    
+
     size_t current_data_offset = 0;
     size_t current_error_offset = 0;
 
     for(auto& layout : ads_item_layouts_read_) {
         layout.offset_in_read_response_data = total_error_block_size + current_data_offset;
         layout.offset_in_read_response_error = current_error_offset;
-        
+
         ADS_ITEM_REQ_HEADER header;
         header.indexGroup = ADSIGRP_SYM_VALBYHND;
         header.indexOffset = layout.ads_handle;
@@ -118,7 +113,7 @@ bool BeckhoffSystem::build_sum_write_buffers() {
         RCLCPP_INFO(getLogger(), "No items to configure for ADS Sum WRITE.");
         return true;
     }
-    
+
     size_t total_data_size = 0;
     size_t total_header_size = num_items_write_ * sizeof(ADS_ITEM_REQ_HEADER);
     for (const auto& layout : ads_item_layouts_write_) {
@@ -136,7 +131,7 @@ bool BeckhoffSystem::build_sum_write_buffers() {
         header_block_ptr[i].indexGroup = ADSIGRP_SYM_VALBYHND;
         header_block_ptr[i].indexOffset = layout.ads_handle;
         header_block_ptr[i].NumBytesData = layout.plc_element_byte_size * layout.num_elements;
-        
+
         layout.offset_in_write_request_data = total_header_size + current_data_offset;
         current_data_offset += header_block_ptr[i].NumBytesData;
         i++;
@@ -150,7 +145,7 @@ bool BeckhoffSystem::build_sum_write_buffers() {
 std::vector<hardware_interface::StateInterface> BeckhoffSystem::export_state_interfaces()
 {
     RCLCPP_INFO(getLogger(), "Exporting state interfaces...");
-    
+
     // Count all state interfaces to pre-allocate memory once and avoid reallocations.
     size_t num_state_interfaces = 0;
     for (const auto& joint : info_.joints) { num_state_interfaces += joint.state_interfaces.size(); }
@@ -168,12 +163,12 @@ std::vector<hardware_interface::StateInterface> BeckhoffSystem::export_state_int
     // Keep track of multiple interfaces targeting the same PLC symbol of type ARRAY[x], but different index
     std::map<std::string, bool> processed_plc_symbols;
     size_t current_hw_states_idx = 0;
-    
+
     auto export_hardware_component_states =
         [&](const auto& components, const std::string& component_type_str) {
         for (const auto& component_info : components) {
             for (const auto& interface_info : component_info.state_interfaces) {
-                
+
                 state_interfaces.emplace_back(hardware_interface::StateInterface(
                     component_info.name, interface_info.name, &hw_states_[current_hw_states_idx]));
 
@@ -224,7 +219,7 @@ std::vector<hardware_interface::StateInterface> BeckhoffSystem::export_state_int
                 current_hw_states_idx++;
             }
         }
-    }; 
+    };
 
 
     export_hardware_component_states(info_.joints, "joint");
@@ -237,7 +232,7 @@ std::vector<hardware_interface::StateInterface> BeckhoffSystem::export_state_int
 std::vector<hardware_interface::CommandInterface> BeckhoffSystem::export_command_interfaces()
 {
     RCLCPP_INFO(getLogger(), "Exporting command interfaces...");
-    
+
     // Count all command interfaces to pre-allocate memory once and avoid reallocations.
     size_t num_command_interfaces = 0;
     for (const auto& joint : info_.joints) { num_command_interfaces += joint.command_interfaces.size(); }
@@ -260,7 +255,7 @@ std::vector<hardware_interface::CommandInterface> BeckhoffSystem::export_command
         [&](const auto& components, const std::string& component_type_str) {
         for (const auto& component_info : components) {
             for (const auto& interface_info : component_info.command_interfaces) {
-                
+
                 double initial_value = std::numeric_limits<double>::quiet_NaN();
 
                 if (interface_info.parameters.count("initial_value")) {
@@ -280,7 +275,7 @@ std::vector<hardware_interface::CommandInterface> BeckhoffSystem::export_command
 
                 command_interfaces.emplace_back(hardware_interface::CommandInterface(
                 component_info.name, interface_info.name, &hw_commands_[ current_hw_commands_idx ]));
-                
+
                 std::string plc_symbol;
                 std::string plc_type_str;
                 size_t num_elements = 1;
@@ -300,13 +295,13 @@ std::vector<hardware_interface::CommandInterface> BeckhoffSystem::export_command
                     current_hw_commands_idx++;
                     continue;
                 }
-                
+
                 if (processed_plc_symbols.find(plc_symbol) == processed_plc_symbols.end()) {
                     ADSDataLayout layout;
                     layout.plc_name_symbolic = plc_symbol;
                     layout.num_elements = num_elements;
                     layout.plc_type = strToPlcType(plc_type_str);
-                    
+
                     if (layout.plc_type == PLCType::UNKNOWN || layout.plc_type == PLCType::STRING) {
                          RCLCPP_ERROR(getLogger(), "Skipping command variable '%s' due to UNSUPPORTED or UNKNOWN PLC_type '%s'.", layout.plc_name_symbolic.c_str(), plc_type_str.c_str());
                     } else {
@@ -317,7 +312,7 @@ std::vector<hardware_interface::CommandInterface> BeckhoffSystem::export_command
                         processed_plc_symbols[plc_symbol] = true;
                     }
                 }
-                
+
                 // Log success
                 if (num_elements > 1) {
                     plc_symbol += "[" + std::to_string(plc_index) + "]";
@@ -336,9 +331,9 @@ std::vector<hardware_interface::CommandInterface> BeckhoffSystem::export_command
     return command_interfaces;
 }
 
-hardware_interface::CallbackReturn BeckhoffSystem::on_activate( 
+hardware_interface::CallbackReturn BeckhoffSystem::on_activate(
   const rclcpp_lifecycle::State & /*previous_state*/)
-{    
+{
   return CallbackReturn::SUCCESS;
 }
 
@@ -353,7 +348,7 @@ hardware_interface::return_type BeckhoffSystem::read(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
     if (num_items_read_  == 0) {
-        return hardware_interface::return_type::OK; 
+        return hardware_interface::return_type::OK;
     }
 
 
@@ -420,7 +415,7 @@ hardware_interface::return_type BeckhoffSystem::read(
                     break;
                 }
                 case PLCType::BOOL: {
-                    uint8_t byte_val; 
+                    uint8_t byte_val;
                     memcpy(&byte_val, ptr_plc_element_current, item_layout.plc_element_byte_size);
                     *ptr_target_hw_state = (byte_val != 0) ? 1.0 : 0.0;
                     break;
@@ -431,7 +426,7 @@ hardware_interface::return_type BeckhoffSystem::read(
                     *ptr_target_hw_state = static_cast<double>(val);
                     break;
                 }
-                case PLCType::USINT: 
+                case PLCType::USINT:
                 case PLCType::BYTE: {
                     uint8_t val;
                     memcpy(&val, ptr_plc_element_current, item_layout.plc_element_byte_size);
@@ -472,7 +467,7 @@ hardware_interface::return_type BeckhoffSystem::read(
                                          "Unhandled or UNKNOWN PLC type (%d) for variable '%s' element %zu during read.",
                                          static_cast<int>(item_layout.plc_type), item_layout.plc_name_symbolic.c_str(), k);
                     *ptr_target_hw_state = std::numeric_limits<double>::quiet_NaN();
-                    any_item_read_failed = true; 
+                    any_item_read_failed = true;
                     break;
             }
 
@@ -485,20 +480,20 @@ hardware_interface::return_type BeckhoffSystem::write(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
     if (num_items_write_  == 0) {
-        return hardware_interface::return_type::OK; 
-    } 
+        return hardware_interface::return_type::OK;
+    }
 
     for (const auto& item_layout : ads_item_layouts_write_) {
 
         uint8_t* ptr_write_buffer_destination = ads_buffer_sum_write_request_.data() + item_layout.offset_in_write_request_data;
 
         // TODO: performance - Hoist the switch/case above for loop?
-        for (size_t k = 0; k < item_layout.num_elements; ++k) {            
+        for (size_t k = 0; k < item_layout.num_elements; ++k) {
             double val = hw_commands_[ item_layout.offset_in_ros2_control + k ];
-            
+
             if (std::isnan(val)) {
                 continue;
-            }            
+            }
 
             uint8_t* ptr_write_buffer_destination_current = ptr_write_buffer_destination + (k * item_layout.plc_element_byte_size);
 
@@ -520,7 +515,7 @@ hardware_interface::return_type BeckhoffSystem::write(
                     break;
                 }
                 case PLCType::SINT: {
-                    int8_t plc_val = static_cast<int8_t>(std::round(val)); 
+                    int8_t plc_val = static_cast<int8_t>(std::round(val));
                     memcpy(ptr_write_buffer_destination_current, &plc_val, item_layout.plc_element_byte_size);
                     break;
                 }
@@ -550,39 +545,39 @@ hardware_interface::return_type BeckhoffSystem::write(
                     memcpy(ptr_write_buffer_destination_current, &plc_val, item_layout.plc_element_byte_size);
                     break;
                 }
-                /* String not supported for now 
+                /* String not supported for now
                 case PLCType::STRING: break;
                 */
                 case PLCType::UNKNOWN:
                 default:
-                    RCLCPP_FATAL(getLogger(), "UNKNOWN PLC type (%d) for variable '%s' element %zu during write. Sending zeroed data of size %zu.", 
+                    RCLCPP_FATAL(getLogger(), "UNKNOWN PLC type (%d) for variable '%s' element %zu during write. Sending zeroed data of size %zu.",
                     static_cast<int>(item_layout.plc_type), item_layout.plc_name_symbolic.c_str(), k, item_layout.plc_element_byte_size);
                     return hardware_interface::return_type::ERROR;
-                    break; 
+                    break;
             }
-        } 
+        }
     }
 
-    uint32_t bytes_response_buffer_from_plc = 0; 
+    uint32_t bytes_response_buffer_from_plc = 0;
     long ads_sum_write_error = ads_device_->ReadWriteReqEx2(
         ADSIGRP_SUMUP_WRITE,
         num_items_write_,
-        ads_buffer_sum_write_response_.size(), 
-        ads_buffer_sum_write_response_.data(), 
-        ads_buffer_sum_write_request_.size(),  
-        ads_buffer_sum_write_request_.data(),  
-        &bytes_response_buffer_from_plc 
+        ads_buffer_sum_write_response_.size(),
+        ads_buffer_sum_write_response_.data(),
+        ads_buffer_sum_write_request_.size(),
+        ads_buffer_sum_write_request_.data(),
+        &bytes_response_buffer_from_plc
     );
 
     if (ads_sum_write_error != ADSERR_NOERR) {
         RCLCPP_ERROR_THROTTLE(getLogger(), *logging_throttle_clock_, 1000,
-                              "Overall ADS Sum Write Error: 0x%lX.", ads_sum_write_error); 
+                              "Overall ADS Sum Write Error: 0x%lX.", ads_sum_write_error);
         return hardware_interface::return_type::ERROR;
     }
 
     if (bytes_response_buffer_from_plc != ads_buffer_sum_write_response_.size()) {
          RCLCPP_ERROR_THROTTLE(getLogger(), *logging_throttle_clock_, 1000,
-                              "ADS Sum Write response size mismatch (error codes). Expected %zu, Got %u.", 
+                              "ADS Sum Write response size mismatch (error codes). Expected %zu, Got %u.",
                               ads_buffer_sum_write_response_.size(), bytes_response_buffer_from_plc);
     }
 
@@ -597,7 +592,7 @@ hardware_interface::return_type BeckhoffSystem::write(
             any_item_write_failed = true;
         }
     }
-    
+
     return any_item_write_failed ? hardware_interface::return_type::ERROR : hardware_interface::return_type::OK;
 }
 
@@ -607,7 +602,7 @@ hardware_interface::CallbackReturn BeckhoffSystem::on_shutdown(
 {
     RCLCPP_INFO(getLogger(), "Releasing ADS resources...");
     if (ads_device_) {
-        ads_device_.reset(); 
+        ads_device_.reset();
     }
     RCLCPP_INFO(getLogger(), "ADS resources released.");
 
@@ -615,7 +610,7 @@ hardware_interface::CallbackReturn BeckhoffSystem::on_shutdown(
 }
 
 bool BeckhoffSystem::configure_ads_device()
-{   
+{
     RCLCPP_INFO(getLogger(), "Configuring ADS device...");
     try {
         const auto& params = info_.hardware_parameters;
@@ -680,7 +675,7 @@ PLCType BeckhoffSystem::strToPlcType(const std::string& type_str_param) {
     if (type_str == "SINT") return PLCType::SINT;
     if (type_str == "BYTE") return PLCType::BYTE;
     if (type_str == "STRING") return PLCType::STRING;
-    
+
     RCLCPP_ERROR(getLogger(), "Unknown PLC type string: '%s'", type_str_param.c_str());
     return PLCType::UNKNOWN;
 }
@@ -697,7 +692,7 @@ size_t BeckhoffSystem::plcTypeByteSize(PLCType plc_type_enum) {
         case PLCType::USINT: return 1;
         case PLCType::SINT:  return 1;
         case PLCType::BYTE:  return 1;
-        //case PLCType::STRING: not currently supported 
+        //case PLCType::STRING: not currently supported
         case PLCType::UNKNOWN: default:
             RCLCPP_ERROR(getLogger(), "Cannot get byte size for UNKNOWN or unhandled PLC type enum value: %d", static_cast<int>(plc_type_enum));
             return 0;

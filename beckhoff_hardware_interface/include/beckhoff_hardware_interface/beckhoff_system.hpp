@@ -14,7 +14,6 @@
 #include <string>
 #include <vector>
 
-#include "beckhoff_hardware_interface/visibility_control.h"
 #include "hardware_interface/system_interface.hpp"
 #include "hardware_interface/handle.hpp"
 #include "hardware_interface/hardware_info.hpp"
@@ -48,7 +47,7 @@ struct ADSDataLayout {
 
     // for unpacking sum read response  [Err1_ULONG,...,ErrN_ULONG | Data1_bytes,...,DataN_bytes]
     size_t      offset_in_read_response_error;    // Byte offset where this item's ULONG error code starts.
-    size_t      offset_in_read_response_data;     // Byte offset where this item's data starts. 
+    size_t      offset_in_read_response_data;     // Byte offset where this item's data starts.
 
     // for packing sum write response [ADS_ITEM_REQ_HEADER_1,...,ADS_ITEM_REQ_HEADER_N | Data1_bytes,...,DataN_bytes]
     size_t      offset_in_write_request_data;     // Byte offset where this item's data starts.
@@ -64,37 +63,27 @@ typedef struct {
 class BeckhoffSystem : public hardware_interface::SystemInterface
 {
 public:
-    TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC
-    hardware_interface::CallbackReturn on_init(
-      const hardware_interface::HardwareInfo & info) override;
+    hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareComponentParams & params);
 
-    TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC
     hardware_interface::CallbackReturn on_configure(
       const rclcpp_lifecycle::State & previous_state) override;
 
-    TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC
     std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
 
-    TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC
     std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
 
-    TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC
     hardware_interface::CallbackReturn on_activate(
       const rclcpp_lifecycle::State & previous_state) override;
 
-    TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC
     hardware_interface::CallbackReturn on_deactivate(
       const rclcpp_lifecycle::State & previous_state) override;
 
-    TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC
     hardware_interface::CallbackReturn on_shutdown(
     const rclcpp_lifecycle::State & previous_state) override;
 
-    TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC
     hardware_interface::return_type read(
       const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
-    TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC
     hardware_interface::return_type write(
       const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
@@ -110,7 +99,7 @@ private:
     // PLC Type and Size Helpers
     PLCType strToPlcType(const std::string& type_str);
     size_t plcTypeByteSize(PLCType type_enum);
-    
+
     // ADS Communication objects
     std::unique_ptr<AdsDevice> ads_device_; // Manages the route/connection to the PLC
     bool configure_ads_device();
@@ -125,14 +114,14 @@ private:
     // ADS Sum Command Buffers
     // SENT: List of ADS_ITEM_REQ_HEADER structs
     // RECEIVED: List of [Err1_ULONG,...,ErrN_ULONG | Data1_bytes,...,DataN_bytes]
-    std::vector<uint8_t> ads_buffer_sum_read_request_;  
-    std::vector<uint8_t> ads_buffer_sum_read_response_; 
+    std::vector<uint8_t> ads_buffer_sum_read_request_;
+    std::vector<uint8_t> ads_buffer_sum_read_response_;
     size_t num_items_read_ = 0;
 
     // SENT: List of [ADS_ITEM_REQ_HEADER_1,...,ADS_ITEM_REQ_HEADER_N | Data1_bytes,...,DataN_bytes]
     // RECEIVED: List of ErrCode_ULONGs
-    std::vector<uint8_t> ads_buffer_sum_write_request_;  
-    std::vector<uint8_t> ads_buffer_sum_write_response_; 
+    std::vector<uint8_t> ads_buffer_sum_write_request_;
+    std::vector<uint8_t> ads_buffer_sum_write_response_;
     size_t num_items_write_ = 0;
   };
 
