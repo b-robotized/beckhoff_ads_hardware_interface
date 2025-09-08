@@ -92,7 +92,9 @@ private:
     std::shared_ptr<rclcpp::Clock> logging_throttle_clock_;
 
     std::vector<double> hw_commands_;
+    std::vector<double> hw_commands_old_;  // keep old commands to detect changes
     std::vector<double> hw_states_;
+    bool write_always_ = false; // If true, all command values are written to PLC on each write() call. If false, only changed values are written.
 
     // ========= PLC ==============================
 

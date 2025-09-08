@@ -483,15 +483,22 @@ hardware_interface::return_type BeckhoffSystem::write(
         return hardware_interface::return_type::OK;
     }
 
-    for (const auto& item_layout : ads_item_layouts_write_) {
+    for (const auto & item_layout : ads_item_layouts_write_) {
 
         uint8_t* ptr_write_buffer_destination = ads_buffer_sum_write_request_.data() + item_layout.offset_in_write_request_data;
 
         // TODO: performance - Hoist the switch/case above for loop?
         for (size_t k = 0; k < item_layout.num_elements; ++k) {
-            double val = hw_commands_[ item_layout.offset_in_ros2_control + k ];
+            const double val = hw_commands_[ item_layout.offset_in_ros2_control + k ];
 
-            if (std::isnan(val)) {
+            bool value_not_ok = std::isnan(val);
+
+            if (not write_always_) {
+              const double old_val = hw_commands_old_[ item_layout.offset_in_ros2_control + k ];
+              value_not_ok |= (val == old_val);
+              hw_commands_old_[ item_layout.offset_in_ros2_control + k ] = val;
+            }
+            if (value_not_ok) {
                 continue;
             }
 
@@ -612,8 +619,8 @@ hardware_interface::CallbackReturn BeckhoffSystem::on_shutdown(
 bool BeckhoffSystem::configure_ads_device()
 {
     RCLCPP_INFO(getLogger(), "Configuring ADS device...");
+    const auto & params = info_.hardware_parameters;
     try {
-        const auto& params = info_.hardware_parameters;
         std::string plc_ip = params.at("plc_ip_address");
         std::string plc_ams_net_id_str = params.at("plc_ams_net_id");
         std::string local_ams_net_id_str = params.at("local_ams_net_id");
@@ -647,15 +654,25 @@ bool BeckhoffSystem::configure_ads_device()
         AdsDeviceState deviceState = ads_device_->GetState();
         RCLCPP_INFO(getLogger(), "\tCommunication successful! ADS State: %d, DeviceState: %d", deviceState.ads, deviceState.device);
 
-    } catch (const std::out_of_range& ex) {
+    } catch (const std::out_of_range & ex) {
         RCLCPP_FATAL(getLogger(), "\tMissing required URDF <hardware> parameter: %s", ex.what());
         return false;
-    } catch (const AdsException& ex) {
+    } catch (const AdsException & ex) {
         RCLCPP_FATAL(getLogger(), "\tADS Exception during connection: %s (Error Code: 0x%lX)", ex.what(), ex.errorCode);
         return false;
-    } catch (const std::exception& ex) {
+    } catch (const std::exception & ex) {
         RCLCPP_FATAL(getLogger(), "\tError during ADS connection config: %s", ex.what());
         return false;
+    }
+
+    auto it = params.find("write_always");
+    if (it != params.end())
+    {
+        write_always_ = hardware_interface::parse_bool(it->second);
+    }
+    else
+    {
+        write_always_ = false;
     }
     return true;
 }
