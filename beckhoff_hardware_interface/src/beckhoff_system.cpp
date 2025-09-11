@@ -334,6 +334,7 @@ std::vector<hardware_interface::CommandInterface> BeckhoffSystem::export_command
 hardware_interface::CallbackReturn BeckhoffSystem::on_activate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
+  hw_commands_old_.resize(hw_commands_.size(), std::numeric_limits<double>::quiet_NaN());
   return CallbackReturn::SUCCESS;
 }
 
@@ -489,17 +490,27 @@ hardware_interface::return_type BeckhoffSystem::write(
 
         // TODO: performance - Hoist the switch/case above for loop?
         for (size_t k = 0; k < item_layout.num_elements; ++k) {
-            const double val = hw_commands_[ item_layout.offset_in_ros2_control + k ];
+            
+            double val = hw_commands_[ item_layout.offset_in_ros2_control + k ];
 
             bool value_not_ok = std::isnan(val);
 
             if (not write_always_) {
               const double old_val = hw_commands_old_[ item_layout.offset_in_ros2_control + k ];
-              value_not_ok |= (val == old_val);
+              value_not_ok = value_not_ok || (val == old_val);
               hw_commands_old_[ item_layout.offset_in_ros2_control + k ] = val;
             }
             if (value_not_ok) {
-                continue;
+                auto it = std::find_if(ads_item_layouts_read_.begin(), ads_item_layouts_read_.end(),
+                             [&](const ADSDataLayout& layout) { return layout.plc_name_symbolic == item_layout.plc_name_symbolic; });
+                if (it != ads_item_layouts_read_.end())
+                {
+                    val = hw_states_[ it->offset_in_ros2_control + k ];
+                }
+                else
+                {
+                    continue;
+                }
             }
 
             uint8_t* ptr_write_buffer_destination_current = ptr_write_buffer_destination + (k * item_layout.plc_element_byte_size);
