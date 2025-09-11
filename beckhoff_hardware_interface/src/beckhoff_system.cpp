@@ -64,6 +64,20 @@ hardware_interface::CallbackReturn BeckhoffSystem::on_configure(
         return hardware_interface::CallbackReturn::ERROR;
     }
 
+    // Link command interfaces to their corresponding state interfaces
+    RCLCPP_INFO(getLogger(), "Linking command interfaces to state interfaces...");
+    for (auto& command_layout : ads_item_layouts_write_) {
+        for (const auto& state_layout : ads_item_layouts_read_) {
+            if (command_layout.plc_name_symbolic == state_layout.plc_name_symbolic) {
+                command_layout.offset_in_ros2_control_state_ = state_layout.offset_in_ros2_control;
+                RCLCPP_INFO(getLogger(), "\tLinked command '%s' to state at hw_states_[%zu]",
+                            command_layout.plc_name_symbolic.c_str(),
+                            command_layout.offset_in_ros2_control_state_);
+                break;
+            }
+        }
+    }
+
     return CallbackReturn::SUCCESS;
 }
 
@@ -241,7 +255,6 @@ std::vector<hardware_interface::CommandInterface> BeckhoffSystem::export_command
     std::vector<hardware_interface::CommandInterface> command_interfaces;
     command_interfaces.reserve(num_command_interfaces);
     hw_commands_.resize(num_command_interfaces, std::numeric_limits<double>::quiet_NaN());
-    hw_commands_old_.resize(num_command_interfaces, std::numeric_limits<double>::quiet_NaN());
 
     // Reserve worst-case scenario for layouts (each interface targets a different PLC symbol)
     ads_item_layouts_write_.clear();
@@ -490,24 +503,20 @@ hardware_interface::return_type BeckhoffSystem::write(
 
         // TODO: performance - Hoist the switch/case above for loop?
         for (size_t k = 0; k < item_layout.num_elements; ++k) {
+
+            // store the current val and reset the ros-side command value
             double val = hw_commands_[ item_layout.offset_in_ros2_control + k ];
+            hw_commands_[ item_layout.offset_in_ros2_control + k ] = std::numeric_limits<double>::quiet_NaN();
 
-            bool value_not_ok = std::isnan(val);
-
-            if (not write_always_) {
-              const double old_val = hw_commands_old_[ item_layout.offset_in_ros2_control + k ];
-              value_not_ok = value_not_ok || (val == old_val);
-              hw_commands_old_[ item_layout.offset_in_ros2_control + k ] = val;
-            }
-            if (value_not_ok) {
-                auto it = std::find_if(ads_item_layouts_read_.begin(), ads_item_layouts_read_.end(),
-                             [&](const ADSDataLayout& layout) { return layout.plc_name_symbolic == item_layout.plc_name_symbolic; });
-                if (it != ads_item_layouts_read_.end())
-                {
-                    val = hw_states_[ it->offset_in_ros2_control + k ];
+            if(std::isnan(val)){
+                // if the original value was NaN and there exist a state interface of the same name, write corresponding state interface
+                if (item_layout.offset_in_ros2_control_state_ != std::numeric_limits<size_t>::max()){
+                    val = hw_states_[item_layout.offset_in_ros2_control_state_ + k];
                 }
-                else
-                {
+
+                // if we STILL don't have a fallback value on, don't update the write buffer.
+                // the last valid command is written
+                if (std::isnan(val)) {
                     continue;
                 }
             }

@@ -13,6 +13,7 @@
 
 #include <string>
 #include <vector>
+#include <limits>
 
 #include "hardware_interface/system_interface.hpp"
 #include "hardware_interface/handle.hpp"
@@ -44,6 +45,9 @@ struct ADSDataLayout {
 
     // for mapping to ros2_control
     size_t      offset_in_ros2_control;    // Starting index in hw_states_ or hw_commands_
+
+    // If we have an identically named command and state interface, in case there are no new commands to be sent to the robot, we want to use the value read in the state interface for the next request.
+    size_t      offset_in_ros2_control_state_ = std::numeric_limits<size_t>::max();
 
     // for unpacking sum read response  [Err1_ULONG,...,ErrN_ULONG | Data1_bytes,...,DataN_bytes]
     size_t      offset_in_read_response_error;    // Byte offset where this item's ULONG error code starts.
@@ -92,9 +96,7 @@ private:
     std::shared_ptr<rclcpp::Clock> logging_throttle_clock_;
 
     std::vector<double> hw_commands_;
-    std::vector<double> hw_commands_old_;  // keep old commands to detect changes
     std::vector<double> hw_states_;
-    bool write_always_ = false; // If true, all command values are written to PLC on each write() call. If false, only changed values are written.
 
     // ========= PLC ==============================
 
