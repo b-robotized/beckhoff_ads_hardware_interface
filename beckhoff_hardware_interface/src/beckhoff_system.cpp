@@ -684,15 +684,6 @@ bool BeckhoffSystem::configure_ads_device()
         return false;
     }
 
-    auto it = params.find("write_always");
-    if (it != params.end())
-    {
-        write_always_ = hardware_interface::parse_bool(it->second);
-    }
-    else
-    {
-        write_always_ = false;
-    }
     return true;
 }
 
