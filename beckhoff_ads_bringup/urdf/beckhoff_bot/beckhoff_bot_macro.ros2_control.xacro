@@ -56,16 +56,22 @@
         <!-- These interfaces can be declared for any component - joint, gpio or sensor -->
 
         <gpio name="robot_io">
-            <xacro:command_interface_PLC name="ManualJogging" PLC_symbol="MAIN.bManualJogging" PLC_type="BOOL" initial_value="1"/>
-            <xacro:command_interface_PLC name="GoToID" PLC_symbol="MAIN.goToID" PLC_type="UDINT" initial_value="5"/>
-            <xacro:command_interface_PLC name="ACSJogPos_0" PLC_symbol="MAIN.bACSJogPos" PLC_type="BOOL" n_elements="2" index="0" initial_value="1"/>
-            <xacro:command_interface_PLC name="ACSJogPos_1" PLC_symbol="MAIN.bACSJogPos" PLC_type="BOOL" n_elements="2" index="1" initial_value="1"/>            
+            <xacro:command_interface_PLC name="joggingEnabled" PLC_symbol="MAIN.joggingEnabled" PLC_type="BOOL" initial_value="1"/>
+            <xacro:command_interface_PLC name="myRobotMode" PLC_symbol="MAIN.myRobotMode" PLC_type="UDINT" initial_value="5"/>
+            <xacro:command_interface_PLC name="commandPos_0" PLC_symbol="MAIN.commandPos" PLC_type="BOOL" n_elements="2" index="0" initial_value="1"/>
+            <xacro:command_interface_PLC name="commandPos_1" PLC_symbol="MAIN.commandPos" PLC_type="BOOL" n_elements="2" index="1" initial_value="1"/>            
         </gpio>
         <sensor name="robot_sensor">
-            <xacro:state_interface_PLC name="StatusError" PLC_symbol="MAIN.bStatusError" PLC_type="BOOL"/>
-            <xacro:state_interface_PLC name="BatteryVoltage" PLC_symbol="MAIN.BatteryVoltage" PLC_type="REAL"/>
-            <xacro:state_interface_PLC name="CurrentPosition_0" PLC_symbol="MAIN.currentPos" PLC_type="LREAL" n_elements="2" index="0" />
-            <xacro:state_interface_PLC name="CurrentPosition_1" PLC_symbol="MAIN.currentPos" PLC_type="LREAL" n_elements="2" index="1" />
+            <xacro:state_interface_PLC name="statusError" PLC_symbol="MAIN.statusError" PLC_type="BOOL"/>
+            <xacro:state_interface_PLC name="batteryVoltage" PLC_symbol="MAIN.batteryVoltage" PLC_type="REAL"/>
+            <xacro:state_interface_PLC name="currentPos_0" PLC_symbol="MAIN.currentPos" PLC_type="LREAL" n_elements="2" index="0" />
+            <xacro:state_interface_PLC name="currentPos_1" PLC_symbol="MAIN.currentPos" PLC_type="LREAL" n_elements="2" index="1" />
+
+            <!-- In this example, these mirror command interfaces, so we can monitor if the variables are set correctly. -->
+            <xacro:state_interface_PLC name="joggingEnabled" PLC_symbol="MAIN.joggingEnabled" PLC_type="BOOL" initial_value="1"/>
+            <xacro:state_interface_PLC name="myRobotMode" PLC_symbol="MAIN.myRobotMode" PLC_type="UDINT" initial_value="5"/>
+            <xacro:state_interface_PLC name="commandPos_0" PLC_symbol="MAIN.commandPos" PLC_type="BOOL" n_elements="2" index="0" initial_value="1"/>
+            <xacro:state_interface_PLC name="commandPos_1" PLC_symbol="MAIN.commandPos" PLC_type="BOOL" n_elements="2" index="1" initial_value="1"/>     
         </sensor>
 
         </ros2_control>
