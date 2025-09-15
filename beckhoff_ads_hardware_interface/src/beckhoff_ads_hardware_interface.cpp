@@ -13,13 +13,13 @@
 #include <cstdint>
 #include <algorithm> // std::transform
 
-#include "beckhoff_hardware_interface/beckhoff_system.hpp"
+#include "beckhoff_ads_hardware_interface/beckhoff_ads_hardware_interface.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-namespace beckhoff_hardware_interface
+namespace beckhoff_ads_hardware_interface
 {
-hardware_interface::CallbackReturn BeckhoffSystem::on_init(
+hardware_interface::CallbackReturn BeckhoffADSHardwareInterface::on_init(
   const hardware_interface::HardwareComponentParams & /*params*/)
 {
   logging_throttle_clock_ = std::make_shared<rclcpp::Clock>(RCL_STEADY_TIME);
@@ -27,7 +27,7 @@ hardware_interface::CallbackReturn BeckhoffSystem::on_init(
   return CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn BeckhoffSystem::on_configure(
+hardware_interface::CallbackReturn BeckhoffADSHardwareInterface::on_configure(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
     // Configure ADS Client Device
@@ -81,7 +81,7 @@ hardware_interface::CallbackReturn BeckhoffSystem::on_configure(
     return CallbackReturn::SUCCESS;
 }
 
-bool BeckhoffSystem::build_sum_read_buffers() {
+bool BeckhoffADSHardwareInterface::build_sum_read_buffers() {
     num_items_read_ = ads_item_layouts_read_.size();
     if (num_items_read_ == 0) {
         RCLCPP_INFO(getLogger(), "No items to configure for ADS Sum READ.");
@@ -120,7 +120,7 @@ bool BeckhoffSystem::build_sum_read_buffers() {
     return true;
 }
 
-bool BeckhoffSystem::build_sum_write_buffers() {
+bool BeckhoffADSHardwareInterface::build_sum_write_buffers() {
     RCLCPP_INFO(getLogger(), "Building ADS sum WRITE buffer...");
     num_items_write_ = ads_item_layouts_write_.size();
     if (num_items_write_ == 0) {
@@ -156,7 +156,7 @@ bool BeckhoffSystem::build_sum_write_buffers() {
     return true;
 }
 
-std::vector<hardware_interface::StateInterface> BeckhoffSystem::export_state_interfaces()
+std::vector<hardware_interface::StateInterface> BeckhoffADSHardwareInterface::export_state_interfaces()
 {
     RCLCPP_INFO(getLogger(), "Exporting state interfaces...");
 
@@ -243,7 +243,7 @@ std::vector<hardware_interface::StateInterface> BeckhoffSystem::export_state_int
     return state_interfaces;
 }
 
-std::vector<hardware_interface::CommandInterface> BeckhoffSystem::export_command_interfaces()
+std::vector<hardware_interface::CommandInterface> BeckhoffADSHardwareInterface::export_command_interfaces()
 {
     RCLCPP_INFO(getLogger(), "Exporting command interfaces...");
 
@@ -345,20 +345,20 @@ std::vector<hardware_interface::CommandInterface> BeckhoffSystem::export_command
     return command_interfaces;
 }
 
-hardware_interface::CallbackReturn BeckhoffSystem::on_activate(
+hardware_interface::CallbackReturn BeckhoffADSHardwareInterface::on_activate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
   return CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn BeckhoffSystem::on_deactivate(
+hardware_interface::CallbackReturn BeckhoffADSHardwareInterface::on_deactivate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
   // TODO: send some safety commands to the PLC?
   return CallbackReturn::SUCCESS;
 }
 
-hardware_interface::return_type BeckhoffSystem::read(
+hardware_interface::return_type BeckhoffADSHardwareInterface::read(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
     if (num_items_read_  == 0) {
@@ -490,7 +490,7 @@ hardware_interface::return_type BeckhoffSystem::read(
     return any_item_read_failed ? hardware_interface::return_type::ERROR : hardware_interface::return_type::OK;
 }
 
-hardware_interface::return_type BeckhoffSystem::write(
+hardware_interface::return_type BeckhoffADSHardwareInterface::write(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
     if (num_items_write_  == 0) {
@@ -623,7 +623,7 @@ hardware_interface::return_type BeckhoffSystem::write(
 }
 
 
-hardware_interface::CallbackReturn BeckhoffSystem::on_shutdown(
+hardware_interface::CallbackReturn BeckhoffADSHardwareInterface::on_shutdown(
     const rclcpp_lifecycle::State & /*previous_state*/)
 {
     RCLCPP_INFO(getLogger(), "Releasing ADS resources...");
@@ -635,7 +635,7 @@ hardware_interface::CallbackReturn BeckhoffSystem::on_shutdown(
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-bool BeckhoffSystem::configure_ads_device()
+bool BeckhoffADSHardwareInterface::configure_ads_device()
 {
     RCLCPP_INFO(getLogger(), "Configuring ADS device...");
     const auto & params = info_.hardware_parameters;
@@ -687,7 +687,7 @@ bool BeckhoffSystem::configure_ads_device()
     return true;
 }
 
-PLCType BeckhoffSystem::strToPlcType(const std::string& type_str_param) {
+PLCType BeckhoffADSHardwareInterface::strToPlcType(const std::string& type_str_param) {
     std::string type_str = type_str_param;
     std::transform(type_str.begin(), type_str.end(), type_str.begin(), ::toupper);
 
@@ -707,7 +707,7 @@ PLCType BeckhoffSystem::strToPlcType(const std::string& type_str_param) {
     return PLCType::UNKNOWN;
 }
 
-size_t BeckhoffSystem::plcTypeByteSize(PLCType plc_type_enum) {
+size_t BeckhoffADSHardwareInterface::plcTypeByteSize(PLCType plc_type_enum) {
     switch (plc_type_enum) {
         case PLCType::LREAL: return 8;
         case PLCType::REAL:  return 4;
@@ -727,9 +727,9 @@ size_t BeckhoffSystem::plcTypeByteSize(PLCType plc_type_enum) {
 }
 
 
-}  // namespace beckhoff_hardware_interface
+}  // namespace beckhoff_ads_hardware_interface
 
 #include "pluginlib/class_list_macros.hpp"
 
 PLUGINLIB_EXPORT_CLASS(
-  beckhoff_hardware_interface::BeckhoffSystem, hardware_interface::SystemInterface)
+  beckhoff_ads_hardware_interface::BeckhoffADSHardwareInterface, hardware_interface::SystemInterface)

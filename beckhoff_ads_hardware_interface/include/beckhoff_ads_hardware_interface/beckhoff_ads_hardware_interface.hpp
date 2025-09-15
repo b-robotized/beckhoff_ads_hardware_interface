@@ -8,8 +8,8 @@
 
 // Author: Nikola Banovic
 
-#ifndef BECKHOFF_HARDWARE_INTERFACE__BECKHOFF_SYSTEM_HPP_
-#define BECKHOFF_HARDWARE_INTERFACE__BECKHOFF_SYSTEM_HPP_
+#ifndef beckhoff_ads_hardware_interface__BECKHOFF_SYSTEM_HPP_
+#define beckhoff_ads_hardware_interface__BECKHOFF_SYSTEM_HPP_
 
 #include <string>
 #include <vector>
@@ -24,7 +24,7 @@
 
 #include "ads/AdsLib.h"
 #include "ads/AdsDevice.h"
-namespace beckhoff_hardware_interface
+namespace beckhoff_ads_hardware_interface
 {
 
 enum class PLCType
@@ -64,7 +64,7 @@ typedef struct {
     uint32_t NumBytesData;      // total num of bytes in this data section
 } ADS_ITEM_REQ_HEADER;
 
-class BeckhoffSystem : public hardware_interface::SystemInterface
+class BeckhoffADSHardwareInterface : public hardware_interface::SystemInterface
 {
 public:
     hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareComponentParams & params);
@@ -92,7 +92,7 @@ public:
       const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
 private:
-    rclcpp::Logger getLogger() { return rclcpp::get_logger("BeckhoffSystem"); }
+    rclcpp::Logger getLogger() { return rclcpp::get_logger("BeckhoffADSHardwareInterface"); }
     std::shared_ptr<rclcpp::Clock> logging_throttle_clock_;
 
     std::vector<double> hw_commands_;
@@ -129,6 +129,6 @@ private:
     size_t num_items_write_ = 0;
   };
 
-}  // namespace beckhoff_hardware_interface
+}  // namespace beckhoff_ads_hardware_interface
 
-#endif  // BECKHOFF_HARDWARE_INTERFACE__BECKHOFF_SYSTEM_HPP_
+#endif  // beckhoff_ads_hardware_interface__BECKHOFF_SYSTEM_HPP_

@@ -1,4 +1,4 @@
-# beckhoff_hardware_interface for ROS 2
+# beckhoff_ads_hardware_interface for ROS 2
 Copyright (c) 2025, b-robotized. All rights reserved.
 Author: Nikola Banovic
 

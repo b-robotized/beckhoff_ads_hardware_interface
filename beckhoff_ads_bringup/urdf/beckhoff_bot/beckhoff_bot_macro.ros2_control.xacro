@@ -39,7 +39,7 @@
                 <param name="mock_sensor_commands">${mock_sensor_commands}</param>
             </xacro:if>
             <xacro:unless value="${mock_hardware}">
-                <plugin>beckhoff_hardware_interface/BeckhoffSystem</plugin>
+                <plugin>beckhoff_ads_hardware_interface/BeckhoffADSHardwareInterface</plugin>
                 <param name="plc_ip_address">192.168.122.218</param>
                 <param name="plc_ams_net_id">192.168.122.218.1.1</param>
                 <param name="plc_ams_port">851</param>

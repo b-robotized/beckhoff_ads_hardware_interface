@@ -1,0 +1,10 @@
+<library path="beckhoff_ads_hardware_interface">
+  <class name="beckhoff_ads_hardware_interface/BeckhoffADSHardwareInterface"
+         type="beckhoff_ads_hardware_interface::BeckhoffADSHardwareInterface"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      ros2_control hardware interface.
+    </description>
+  </class>
+</library>
+

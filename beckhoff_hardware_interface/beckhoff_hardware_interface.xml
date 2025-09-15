@@ -1,9 +1,0 @@
-<library path="beckhoff_hardware_interface">
-  <class name="beckhoff_hardware_interface/BeckhoffSystem"
-         type="beckhoff_hardware_interface::BeckhoffSystem"
-         base_class_type="hardware_interface::SystemInterface">
-    <description>
-      ros2_control hardware interface.
-    </description>
-  </class>
-</library>

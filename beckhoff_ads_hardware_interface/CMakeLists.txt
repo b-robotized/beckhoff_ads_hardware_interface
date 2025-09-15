@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(beckhoff_hardware_interface)
+project(beckhoff_ads_hardware_interface)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "(GNU|Clang)")
   add_compile_options(-Wall -Wextra -Werror=unused-but-set-variable -Werror=return-type -Werror=shadow)
@@ -14,32 +14,32 @@ find_package(rclcpp_lifecycle REQUIRED)
 find_package(ads_vendor REQUIRED)
 
 add_library(
-  beckhoff_hardware_interface
+  beckhoff_ads_hardware_interface
   SHARED
-  src/beckhoff_system.cpp
+  src/beckhoff_ads_hardware_interface.cpp
 )
 
 target_include_directories(
-  beckhoff_hardware_interface
+  beckhoff_ads_hardware_interface
   PUBLIC
   include
 )
 ament_target_dependencies(
-  beckhoff_hardware_interface
+  beckhoff_ads_hardware_interface
   hardware_interface
   rclcpp
   rclcpp_lifecycle
   ads_vendor
 )
 # prevent pluginlib from using boost
-target_compile_definitions(beckhoff_hardware_interface PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
+target_compile_definitions(beckhoff_ads_hardware_interface PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 
 pluginlib_export_plugin_description_file(
-  hardware_interface beckhoff_hardware_interface.xml)
+  hardware_interface beckhoff_ads_hardware_interface.xml)
 
 install(
   TARGETS
-  beckhoff_hardware_interface
+  beckhoff_ads_hardware_interface
   RUNTIME DESTINATION bin
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
@@ -54,7 +54,7 @@ ament_export_include_directories(
   include
 )
 ament_export_libraries(
-  beckhoff_hardware_interface
+  beckhoff_ads_hardware_interface
 )
 ament_export_dependencies(
   hardware_interface
