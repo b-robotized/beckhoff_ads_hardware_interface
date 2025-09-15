@@ -68,10 +68,10 @@
             <xacro:state_interface_PLC name="currentPos_1" PLC_symbol="MAIN.currentPos" PLC_type="LREAL" n_elements="2" index="1" />
 
             <!-- In this example, these mirror command interfaces, so we can monitor if the variables are set correctly. -->
-            <xacro:state_interface_PLC name="joggingEnabled" PLC_symbol="MAIN.joggingEnabled" PLC_type="BOOL" initial_value="1"/>
-            <xacro:state_interface_PLC name="myRobotMode" PLC_symbol="MAIN.myRobotMode" PLC_type="UDINT" initial_value="5"/>
-            <xacro:state_interface_PLC name="commandPos_0" PLC_symbol="MAIN.commandPos" PLC_type="BOOL" n_elements="2" index="0" initial_value="1"/>
-            <xacro:state_interface_PLC name="commandPos_1" PLC_symbol="MAIN.commandPos" PLC_type="BOOL" n_elements="2" index="1" initial_value="1"/>     
+            <xacro:state_interface_PLC name="joggingEnabled" PLC_symbol="MAIN.joggingEnabled" PLC_type="BOOL" />
+            <xacro:state_interface_PLC name="myRobotMode" PLC_symbol="MAIN.myRobotMode" PLC_type="UDINT"/>
+            <xacro:state_interface_PLC name="commandPos_0" PLC_symbol="MAIN.commandPos" PLC_type="BOOL" n_elements="2" index="0" />
+            <xacro:state_interface_PLC name="commandPos_1" PLC_symbol="MAIN.commandPos" PLC_type="BOOL" n_elements="2" index="1" />     
         </sensor>
 
         </ros2_control>
