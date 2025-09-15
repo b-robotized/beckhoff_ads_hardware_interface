@@ -40,8 +40,8 @@
             </xacro:if>
             <xacro:unless value="${mock_hardware}">
                 <plugin>beckhoff_ads_hardware_interface/BeckhoffADSHardwareInterface</plugin>
-                <param name="plc_ip_address">192.168.122.218</param>
-                <param name="plc_ams_net_id">192.168.122.218.1.1</param>
+                <param name="plc_ip_address">192.168.122.2</param>
+                <param name="plc_ams_net_id">192.168.122.2.1.1</param>
                 <param name="plc_ams_port">851</param>
                 <param name="local_ams_net_id">192.168.122.1.1.1</param>
             </xacro:unless>
