@@ -4,6 +4,7 @@
   <name>beckhoff_ads_hardware_interface</name>
   <version>0.0.0</version>
   <description>Ros2Control hardware interface for integrating with Beckhoff PLC</description>
+  <author email="nikola.banovic@b-robotized.com">Nikola Banovic </author>
   <maintainer email="nikola.banovic@b-robotized.com">Nikola Banovic</maintainer>
   <license>Apache-2.0</license>
 

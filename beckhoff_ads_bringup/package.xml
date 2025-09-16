@@ -4,6 +4,7 @@
   <name>beckhoff_ads_bringup</name>
   <version>0.0.0</version>
   <description>Demo bringup package for beckhoff_ads_hardware_interface</description>
+  <author email="nikola.banovic@b-robotized.com">Nikola Banovic </author>
   <maintainer email="nikola.banovic@b-robotized.com">Nikola Banovic</maintainer>
   <license>Apache-2.0</license>
 
