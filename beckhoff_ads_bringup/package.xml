@@ -5,14 +5,12 @@
   <version>0.0.0</version>
   <description>Demo bringup package for beckhoff_ads_hardware_interface</description>
   <maintainer email="nikola.banovic@b-robotized.com">Nikola Banovic</maintainer>
-  <license>b-robotized</license>
+  <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <exec_depend>controller_manager</exec_depend>
-
   <exec_depend>robot_state_publisher</exec_depend>
-
   <exec_depend>xacro</exec_depend>
 
   <export>

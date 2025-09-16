@@ -5,20 +5,15 @@
   <version>0.0.0</version>
   <description>Ros2Control hardware interface for integrating with Beckhoff PLC</description>
   <maintainer email="nikola.banovic@b-robotized.com">Nikola Banovic</maintainer>
-  <license>b-robotized</license>
+  <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>hardware_interface</depend>
-
   <depend>pluginlib</depend>
-
   <depend>rclcpp</depend>
-
   <depend>rclcpp_lifecycle</depend>
-
   <depend>yaml_cpp_vendor</depend>
-
   <depend>ads_vendor</depend>
 
   <export>
