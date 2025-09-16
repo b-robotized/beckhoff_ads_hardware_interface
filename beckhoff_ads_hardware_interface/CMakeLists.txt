@@ -24,13 +24,14 @@ target_include_directories(
   PUBLIC
   include
 )
-ament_target_dependencies(
-  beckhoff_ads_hardware_interface
-  hardware_interface
-  rclcpp
-  rclcpp_lifecycle
-  ads_vendor
+target_link_libraries(beckhoff_ads_hardware_interface PUBLIC
+  hardware_interface::hardware_interface
+  hardware_interface::mock_components
+  rclcpp::rclcpp
+  rclcpp_lifecycle::rclcpp_lifecycle
+  ads_vendor::ads_vendor
 )
+
 # prevent pluginlib from using boost
 target_compile_definitions(beckhoff_ads_hardware_interface PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 
