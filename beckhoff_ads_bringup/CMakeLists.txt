@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(beckhoff_bringup)
+project(beckhoff_ads_bringup)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "(GNU|Clang)")
   add_compile_options(-Wall -Wextra -Werror=conversion -Werror=unused-but-set-variable -Werror=return-type -Werror=shadow)

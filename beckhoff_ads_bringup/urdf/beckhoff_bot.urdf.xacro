@@ -6,8 +6,8 @@
   <xacro:arg name="mock_hardware" default="false"/>
   <xacro:arg name="mock_sensor_commands" default="false"/>
 
-  <xacro:include filename="$(find beckhoff_bringup)/urdf/beckhoff_bot/beckhoff_bot_macro.xacro"/>
-  <xacro:include filename="$(find beckhoff_bringup)/urdf/beckhoff_bot/beckhoff_bot_macro.ros2_control.xacro"/>
+  <xacro:include filename="$(find beckhoff_ads_bringup)/urdf/beckhoff_bot/beckhoff_bot_macro.xacro"/>
+  <xacro:include filename="$(find beckhoff_ads_bringup)/urdf/beckhoff_bot/beckhoff_bot_macro.ros2_control.xacro"/>
 
   <!-- create link fixed to the "world" -->
   <link name="world"/>
