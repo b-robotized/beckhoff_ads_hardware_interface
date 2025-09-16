@@ -67,7 +67,7 @@ Here we also provide a sample PLC project with this hardware interface, along wi
 First, load and compile the sample PLC project in your TwinCAT XAE environment. TwinCAT XAE is available for non-commercial use with a trial license
 
 1.  **Import the PLC Project**: Import the from the `PLC-TestProject` directory.
-2.  **Import the Library**: The PLC program requires the `tc3_interfaces` [library](../PLC-TestProject/Untitled1/_Libraries/beckhoff%20automation%20gmbh/tc3_interfaces/) provided with the project. In the Solution Explorer, right-click on **References**, select **Add Library**, and add the provided `.compiled-library` file. This will allow the program to compile successfully.
+2.  **Import the Library**: The PLC program requires the `tc3_interfaces` [library](PLC-TestProject/Untitled1/_Libraries/beckhoff%20automation%20gmbh/tc3_interfaces/) provided with the project. In the Solution Explorer, right-click on **References**, select **Add Library**, and add the provided `.compiled-library` file. This will allow the program to compile successfully.
 
 ### 2. Configure TwinCAT Networking
 
