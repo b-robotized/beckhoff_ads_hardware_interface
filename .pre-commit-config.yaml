@@ -12,7 +12,7 @@
 #     pre-commit autoupdate
 #
 # See https://github.com/pre-commit/pre-commit
-
+exclude: '^PLC-TestProject/'
 repos:
   # Standard hooks
   - repo: https://github.com/pre-commit/pre-commit-hooks
