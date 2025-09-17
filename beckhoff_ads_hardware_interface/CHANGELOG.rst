@@ -2,8 +2,8 @@
 Changelog for package beckhoff_ads_hardware_interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.0 (2025-09-17)
+------------------
 * change deprecated ament_target_dependencies
 * update maintainer/author
 * add LICENSE

@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>beckhoff_ads_bringup</name>
-  <version>0.0.0</version>
+  <version>1.0.0</version>
   <description>Demo bringup package for beckhoff_ads_hardware_interface</description>
   <author email="nikola.banovic@b-robotized.com">Nikola Banovic </author>
   <maintainer email="nikola.banovic@b-robotized.com">Nikola Banovic</maintainer>

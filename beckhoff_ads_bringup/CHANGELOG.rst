@@ -2,8 +2,8 @@
 Changelog for package beckhoff_ads_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.0 (2025-09-17)
+------------------
 * update maintainer/author
 * rename bringup package to beckhoff_ads_bringup
 * add LICENSE
