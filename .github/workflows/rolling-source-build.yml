@@ -1,0 +1,23 @@
+name: Rolling Source Build
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - rolling
+    paths:
+      - '**.hpp'
+      - '**.h'
+      - '**.cpp'
+      - '**.py'
+      - '.github/workflows/rolling-source-build.yml'
+      - '**/package.xml'
+      - '**/CMakeLists.txt'
+      - 'beckhoff_ads_driver.rolling.repos'
+
+jobs:
+  source:
+    uses: ros-controls/ros2_control_ci/.github/workflows/reusable-ros-tooling-source-build.yml@master
+    with:
+      ros_distro: rolling
+      ref: rolling
+      container: ubuntu:24.04
